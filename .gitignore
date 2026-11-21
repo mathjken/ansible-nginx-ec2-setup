@@ -1,0 +1,36 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfplan
+tfplan
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Terraform lock file should remain committed
+# .terraform.lock.hcl
+
+# SSH private and public keys
+*.pem
+*-key
+*-key.pub
+id_rsa
+id_ed25519
+
+# Sensitive credentials
+.env
+.env.*
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Operating system
+.DS_Store
+Thumbs.db
+ansible/inventory.ini
