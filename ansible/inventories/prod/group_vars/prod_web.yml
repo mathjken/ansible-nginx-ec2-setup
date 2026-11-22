@@ -1,0 +1,5 @@
+---
+deployment_environment: production
+nginx_website_owner: root
+nginx_website_group: root
+nginx_website_mode: "0644"

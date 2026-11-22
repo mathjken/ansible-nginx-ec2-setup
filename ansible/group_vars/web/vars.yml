@@ -1,0 +1,7 @@
+---
+app_secrets_directory: /etc/ansible-nginx
+app_secrets_file: /etc/ansible-nginx/deployment.env
+app_secrets_owner: root
+app_secrets_group: root
+app_secrets_directory_mode: "0750"
+app_secrets_file_mode: "0600"

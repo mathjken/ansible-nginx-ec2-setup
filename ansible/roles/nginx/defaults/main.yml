@@ -1,0 +1,7 @@
+---
+nginx_package: nginx
+nginx_service: nginx
+nginx_document_root: /var/www/html
+nginx_website_owner: root
+nginx_website_group: root
+nginx_website_mode: "0644"
