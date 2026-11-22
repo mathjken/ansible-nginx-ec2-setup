@@ -3,7 +3,7 @@
   ansible.builtin.apt:
     name: "{{ nginx_package }}"
     state: present
-  notify: Restart Nginx
+  notify: Validate and reload Nginx
 
 - name: Deploy custom website
   ansible.builtin.copy:
@@ -12,7 +12,6 @@
     owner: "{{ nginx_website_owner }}"
     group: "{{ nginx_website_group }}"
     mode: "{{ nginx_website_mode }}"
-  notify: Restart Nginx
 
 - name: Configure application secrets securely
   block:

@@ -3,3 +3,7 @@ deployment_environment: development
 nginx_website_owner: root
 nginx_website_group: root
 nginx_website_mode: "0644"
+
+app_debug: true
+app_log_level: debug
+app_base_url: "http://dev.example.invalid"
