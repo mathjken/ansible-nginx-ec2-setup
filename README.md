@@ -230,3 +230,35 @@ A successful deployment should return an HTTP 200 response. A second Ansible dep
 - The deployed environment file is owned by root and uses file permission 0600.
 ### Evidence
 Deployment evidence and screenshots are maintained in docs/evidence/.
+
+
+## Environment-specific Ansible configuration
+
+The project supports separate development and production inventories while reusing the same Ansible roles and deployment playbook.
+
+```text
+ansible/inventories/
+├── dev/
+│   ├── hosts.ini
+│   └── group_vars/
+│       └── dev_web.yml
+└── prod/
+    ├── hosts.ini
+    └── group_vars/
+        └── prod_web.yml
+
+
+Both inventories use the parent web group, with separate child groups and environment-specific variables.
+Deploy to development
+Configure the development inventory with valid development connection details, then run from the ansible/ directory:
+ansible-playbook -i inventories/dev/hosts.ini --ask-vault-pass playbooks/site.yml
+
+
+Deploy to production
+Configure the production inventory with valid production connection details, then run:
+ansible-playbook -i inventories/prod/hosts.ini --ask-vault-pass playbooks/site.yml
+
+
+The same roles and playbook are reused in both environments. Environment-specific settings are maintained separately. The encrypted Vault variables remain centrally managed under group_vars/web/.
+
+Do not use placeholder inventory addresses for deployment. Keep real inventory credentials and SSH private keys out of version control.
