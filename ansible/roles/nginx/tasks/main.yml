@@ -1,0 +1,54 @@
+---
+- name: Install Nginx
+  ansible.builtin.apt:
+    name: "{{ nginx_package }}"
+    state: present
+  notify: Restart Nginx
+
+- name: Deploy custom website
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../files/index.html"
+    dest: "{{ nginx_document_root }}/index.html"
+    owner: "{{ nginx_website_owner }}"
+    group: "{{ nginx_website_group }}"
+    mode: "{{ nginx_website_mode }}"
+  notify: Restart Nginx
+
+- name: Configure application secrets securely
+  block:
+    - name: Create application secrets directory
+      ansible.builtin.file:
+        path: "{{ app_secrets_directory }}"
+        state: directory
+        owner: "{{ app_secrets_owner }}"
+        group: "{{ app_secrets_group }}"
+        mode: "{{ app_secrets_directory_mode }}"
+
+    - name: Deploy encrypted application secret
+      ansible.builtin.template:
+        src: deployment.env.j2
+        dest: "{{ app_secrets_file }}"
+        owner: "{{ app_secrets_owner }}"
+        group: "{{ app_secrets_group }}"
+        mode: "{{ app_secrets_file_mode }}"
+      no_log: true
+
+  rescue:
+    - name: Report secure configuration failure
+      ansible.builtin.debug:
+        msg: "Application secrets configuration failed. Check the deployment and permissions."
+
+    - name: Stop deployment after secret configuration failure
+      ansible.builtin.fail:
+        msg: "Deployment stopped because secure application configuration failed."
+
+  always:
+    - name: Report completion of secrets configuration attempt
+      ansible.builtin.debug:
+        msg: "Secure application configuration block completed."
+
+- name: Ensure Nginx is started and enabled
+  ansible.builtin.service:
+    name: "{{ nginx_service }}"
+    state: started
+    enabled: true
