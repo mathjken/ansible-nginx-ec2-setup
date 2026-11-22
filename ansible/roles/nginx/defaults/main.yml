@@ -5,3 +5,8 @@ nginx_document_root: /var/www/html
 nginx_website_owner: root
 nginx_website_group: root
 nginx_website_mode: "0644"
+
+deployment_environment: development
+app_debug: false
+app_log_level: info
+app_base_url: "https://example.invalid"

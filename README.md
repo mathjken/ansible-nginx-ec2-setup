@@ -262,3 +262,67 @@ ansible-playbook -i inventories/prod/hosts.ini --ask-vault-pass playbooks/site.y
 The same roles and playbook are reused in both environments. Environment-specific settings are maintained separately. The encrypted Vault variables remain centrally managed under group_vars/web/.
 
 Do not use placeholder inventory addresses for deployment. Keep real inventory credentials and SSH private keys out of version control.
+
+## Advanced Ansible configuration
+
+The Nginx role includes configuration-validation and graceful-reload handlers.
+
+When an Nginx package change notifies the handler, Ansible runs `nginx -t` before reloading the service. Static website content updates do not trigger an unnecessary Nginx reload.
+
+### Dynamic application configuration
+
+The Jinja2 `deployment.env.j2` template renders environment-specific settings, including:
+
+- Application environment
+- Debug mode
+- Application log level
+- Application base URL
+- Encrypted API token from Ansible Vault
+
+Development and production settings are maintained independently under their respective inventory `group_vars` directories.
+
+The rendered application environment file uses restricted file permissions. The API token is excluded from Ansible task output using `no_log`.
+
+### SSH connection configuration
+
+The inventory example includes:
+
+- Explicit SSH connection and private-key settings
+- Python interpreter configuration
+- Connection timeout
+- Privilege escalation through sudo
+- SSH keepalive settings
+- SSH connection persistence configured in `ansible.cfg`
+
+These settings improve connection reliability while preserving SSH host-key checking.
+
+### Validation
+
+Validate the playbook:
+
+```bash
+cd ansible
+ansible-playbook --syntax-check --ask-vault-pass playbooks/site.yml
+
+
+Validate development and production inventory variables:
+ansible-inventory -i inventories/dev/hosts.ini -i inventories/prod/hosts.ini --list --ask-vault-pass
+
+
+The development and production template rendering checks can be performed locally without deploying to EC2.
+EOF
+
+echo "===== SERVICE MODULE ====="
+ansible-doc -t module ansible.builtin.service >/dev/null && echo "Service module available"
+
+echo "===== PATCH VALIDATION ====="
+git diff --check || exit 1
+
+echo "===== CHANGE SUMMARY ====="
+git diff --stat
+
+echo "===== CURRENT BRANCH ====="
+git branch --show-current
+
+echo "===== WORKING TREE ====="
+git status --short
